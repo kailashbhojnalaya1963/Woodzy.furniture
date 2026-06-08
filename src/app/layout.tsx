@@ -27,11 +27,23 @@ export const metadata: Metadata = {
   },
   description:
     "Woodzy crafts warm, handmade wooden furniture — sofas, beds, dining, tables and more. Delivery & installation across Bihar, Jharkhand & West Bengal. Showroom in Deoghar.",
+  icons: {
+    icon: "/brand/woodzy-logo.jpeg",
+    shortcut: "/brand/woodzy-logo.jpeg",
+    apple: "/brand/woodzy-logo.jpeg",
+  },
   openGraph: {
     title: `${SITE.name} — ${SITE.tagline}`,
     description: "Handcrafted wooden furniture for warm, cozy living.",
     type: "website",
     locale: "en_IN",
+    images: [{ url: "/brand/woodzy-logo.jpeg", alt: "Woodzy — Warm Woods, Cozy Living." }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — ${SITE.tagline}`,
+    description: "Handcrafted wooden furniture for warm, cozy living.",
+    images: ["/brand/woodzy-logo.jpeg"],
   },
 };
 
