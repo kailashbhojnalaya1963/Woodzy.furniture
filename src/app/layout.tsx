@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { MobileNav } from "@/components/layout/MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { getCategories } from "@/lib/catalog";
 import { SITE, SITE_URL } from "@/config/site";
@@ -56,11 +57,24 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const categories = await getCategories();
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} antialiased`}>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${inter.variable} antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-dvh flex flex-col bg-cream text-wood-darkest">
+        {/* Pre-paint: blur the page for first-time visitors so the intro isn't
+            spoiled by a flash of the live site (removed after the unboxing). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var s=sessionStorage.getItem('woodzy_intro_seen')==='1';var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!s&&!r){document.documentElement.classList.add('intro-active');}}catch(e){}})();",
+          }}
+        />
         <Navbar categories={categories} />
         <main className="flex-1">{children}</main>
         <Footer categories={categories} />
+        <MobileNav categories={categories} />
         <CartDrawer />
       </body>
     </html>

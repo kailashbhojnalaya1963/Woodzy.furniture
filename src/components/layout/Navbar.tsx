@@ -7,7 +7,7 @@ import type { Category } from "@/types/catalog";
 import { Logo } from "@/components/brand/Logo";
 import { CartButton } from "@/components/cart/CartButton";
 import { MegaMenu } from "./MegaMenu";
-import { MobileNav } from "./MobileNav";
+import { useUI } from "@/store/ui";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -19,7 +19,7 @@ const NAV_LINKS = [
 export function Navbar({ categories }: { categories: Category[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const openMobileNav = useUI((s) => s.openMobileNav);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -79,19 +79,12 @@ export function Navbar({ categories }: { categories: Category[] }) {
           <button
             className="p-2 lg:hidden"
             aria-label="Open menu"
-            onClick={() => setMobileOpen(true)}
+            onClick={openMobileNav}
           >
             <Menu className="size-6" />
           </button>
         </div>
       </div>
-
-      <MobileNav
-        open={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        categories={categories}
-        links={NAV_LINKS}
-      />
     </header>
   );
 }

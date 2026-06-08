@@ -27,9 +27,9 @@ export function BriefcaseOpen({
       {show && (
         <motion.div
           className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-[#140a04] cursor-pointer"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6 } }}
+          exit={{ opacity: 0, transition: { duration: 0.7 } }}
           onClick={() => setShow(false)}
           role="dialog"
           aria-label="Woodzy intro — tap to enter"

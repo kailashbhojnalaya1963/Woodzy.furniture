@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getFeatured, getProducts, getCategories } from "@/lib/catalog";
-import { LandingIntro } from "@/components/intro/LandingIntro";
+import { RevealStage } from "@/components/intro/RevealStage";
 import { ShowroomTurntable } from "@/components/hero/ShowroomTurntable";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { NewArrivals } from "@/components/home/NewArrivals";
@@ -25,9 +25,7 @@ export default async function Home() {
   const regions = SITE.serviceRegions.join(", ");
 
   return (
-    <>
-      <LandingIntro />
-
+    <RevealStage>
       <section
         className="relative overflow-hidden text-cream"
         style={{ background: "radial-gradient(circle at 50% 25%, #6B3E1D, #1c1006 70%)" }}
@@ -72,6 +70,6 @@ export default async function Home() {
       <Materials />
       <StoryStrip />
       <TrustStrip />
-    </>
+    </RevealStage>
   );
 }

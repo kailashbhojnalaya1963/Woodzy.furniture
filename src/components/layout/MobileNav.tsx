@@ -5,73 +5,79 @@ import { X } from "lucide-react";
 import { useEffect } from "react";
 import type { Category } from "@/types/catalog";
 import { Logo } from "@/components/brand/Logo";
+import { useUI } from "@/store/ui";
 import { cn } from "@/lib/utils";
 
-export function MobileNav({
-  open,
-  onClose,
-  categories,
-  links,
-}: {
-  open: boolean;
-  onClose: () => void;
-  categories: Category[];
-  links: { href: string; label: string }[];
-}) {
+const LINKS = [
+  { href: "/collections", label: "Collections" },
+  { href: "/our-story", label: "Our Story" },
+  { href: "/showroom", label: "Showroom" },
+];
+
+export function MobileNav({ categories }: { categories: Category[] }) {
+  const open = useUI((s) => s.mobileNavOpen);
+  const close = useUI((s) => s.closeMobileNav);
+
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, close]);
 
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 lg:hidden",
+        "fixed inset-0 z-[70] lg:hidden",
         open ? "pointer-events-auto" : "pointer-events-none",
       )}
       aria-hidden={!open}
     >
       <div
         className={cn(
-          "absolute inset-0 bg-wood-darkest/40 transition-opacity duration-300",
+          "absolute inset-0 bg-wood-darkest/60 transition-opacity duration-300",
           open ? "opacity-100" : "opacity-0",
         )}
-        onClick={onClose}
+        onClick={close}
       />
       <div
         className={cn(
-          "absolute right-0 top-0 h-full w-80 max-w-[85%] bg-cream shadow-xl p-5 flex flex-col transition-transform duration-300",
+          "absolute right-0 top-0 h-full w-80 max-w-[85%] bg-cream shadow-2xl p-5 flex flex-col transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
         <div className="flex items-center justify-between mb-6">
           <Logo variant="mark" size={36} />
-          <button onClick={onClose} aria-label="Close menu" className="p-2">
+          <button onClick={close} aria-label="Close menu" className="p-2 text-wood-darkest">
             <X className="size-6" />
           </button>
         </div>
-        <Link href="/shop" onClick={onClose} className="py-2 font-medium">
+
+        <Link href="/shop" onClick={close} className="py-2 font-medium text-wood-darkest">
           Shop all
         </Link>
-        <div className="pl-3 border-l border-wood-dark/10 mb-2">
+        <div className="pl-3 border-l border-wood-dark/15 my-1">
           {categories.map((c) => (
             <Link
               key={c.slug}
               href={`/category/${c.slug}`}
-              onClick={onClose}
-              className="block py-1.5 text-sm text-wood-dark"
+              onClick={close}
+              className="block py-1.5 text-sm text-wood-dark/80"
             >
               {c.name}
             </Link>
           ))}
         </div>
-        {links.map((l) => (
-          <Link key={l.href} href={l.href} onClick={onClose} className="py-2 font-medium">
+        {LINKS.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            onClick={close}
+            className="py-2 font-medium text-wood-darkest"
+          >
             {l.label}
           </Link>
         ))}
-        <div className="mt-auto text-xs text-wood-dark/60">Warm Woods, Cozy Living.</div>
+        <div className="mt-auto text-xs text-wood-dark/50">Warm Woods, Cozy Living.</div>
       </div>
     </div>
   );
