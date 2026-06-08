@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import type { Category } from "@/types/catalog";
-import { Logo } from "@/components/brand/Logo";
 import { cn } from "@/lib/utils";
 
 export function MobileNav({
@@ -46,7 +46,13 @@ export function MobileNav({
         )}
       >
         <div className="flex items-center justify-between mb-6">
-          <Logo variant="mark" size={36} />
+          <Image
+            src="/brand/woodzy-logo.png"
+            alt="Woodzy"
+            width={968}
+            height={697}
+            className="h-9 w-auto"
+          />
           <button onClick={onClose} aria-label="Close menu" className="p-2">
             <X className="size-6" />
           </button>

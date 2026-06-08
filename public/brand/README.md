@@ -1,12 +1,15 @@
 # Woodzy brand assets
 
-Drop the official artwork here so the site uses the real files:
+- `woodzy-logo.jpeg` — official logo (white background). Used for the **favicon**,
+  apple-touch-icon and **Open Graph / social share** image (set in `src/app/layout.tsx`).
+- `woodzy-logo.png` — **transparent-background** version, generated from the JPEG by
+  `scripts/make-transparent-logo.cjs` (edge flood-fill keeps the white "W" intact). Used as the
+  **header logo** in the navbar + mobile menu, which sit on the cream surface.
+- `wood-grain.svg` — subtle section texture (used by the `.wood-grain` CSS class).
 
-- `woodzy-logo.png` — full colour logo (used for favicon + social/OG share cards).
-- `woodzy-logo.svg` — optional vector version (preferred if available).
-- `og.png` — 1200×630 social share image (optional; falls back to the logo).
+The dark footer and the briefcase intro use the vector mark in
+`src/components/brand/Logo.tsx` (light variant), because the logo's dark wordmark would disappear
+on the dark wood backgrounds. To show the real lockup there too, add an **inverted/white logo**
+file and we can swap it in.
 
-Until these exist, the in-app logo renders from the vector component at
-`src/components/brand/Logo.tsx`, and the favicon falls back to the Next default.
-
-`wood-grain.svg` here is the subtle section texture (used by the `.wood-grain` CSS class).
+To regenerate the transparent PNG after replacing the JPEG: `node scripts/make-transparent-logo.cjs`.
