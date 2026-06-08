@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Woodzy
 
-## Getting Started
+Storefront for **Woodzy** — a furniture & luxury-goods store in Deoghar, Jharkhand.
+*Warm Woods, Cozy Living.*
 
-First, run the development server:
+A cinematic Next.js storefront: a briefcase-opening intro → an interactive 360° turntable hero,
+full browse → cart → checkout, **WhatsApp-quote ordering**, a stubbed (grey) Razorpay layer, and an
+owner admin. It runs **fully on a local seed catalog** so it works before Supabase is connected.
+
+## Tech
+
+Next.js 16 (App Router, TS) · Tailwind v4 · framer-motion · Zustand · Supabase (`@supabase/ssr`) ·
+zod · Vitest.
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run test     # unit tests (Vitest)
+npm run build    # production build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Everything owner-toggleable lives in [`src/config/site.ts`](src/config/site.ts):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Setting | Purpose |
+|---|---|
+| `whatsappNumber` | wa.me number quotes are sent to (currently `916291663674`) |
+| `serviceRegions` | delivery regions — drives copy + the checkout state dropdown |
+| `paymentsEnabled` | keep `false` to show Razorpay as "coming soon" (grey); `true` to go live |
+| `showPrices` | show ₹ prices |
+| `showroom` | Deoghar address / hours |
 
-## Learn More
+Environment variables: copy [`.env.example`](.env.example) → `.env.local`.
 
-To learn more about Next.js, take a look at the following resources:
+## How data works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The storefront reads through [`src/lib/catalog.ts`](src/lib/catalog.ts):
+- **No Supabase env** → serves the bundled **seed catalog** ([`src/data/seed/`](src/data/seed)).
+- **Supabase connected** → serves live DB data and enables the owner admin at `/admin`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+So the site deploys and looks complete with zero backend; Supabase is additive.
 
-## Deploy on Vercel
+## Going live — checklist
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Logo:** drop the official artwork at `public/brand/woodzy-logo.png` (see
+   [`public/brand/README.md`](public/brand/README.md)).
+2. **Deploy:** push to GitHub → import to Vercel (root = this folder).
+3. **Supabase:**
+   - Create a project; run [`supabase/schema.sql`](supabase/schema.sql) in the SQL editor.
+   - Create the owner login under **Authentication → Users**.
+   - In **Vercel → Settings → Environment Variables**, add `NEXT_PUBLIC_SUPABASE_URL`,
+     `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, then **redeploy**
+     (these are inlined at build time, so a rebuild is required).
+   - Manage products/categories and watch orders at `/admin`.
+4. **Payments (when ready):** set `paymentsEnabled = true`, add `RAZORPAY_KEY_ID` /
+   `RAZORPAY_KEY_SECRET`, `npm i razorpay`, and finish the order-creation block in
+   [`src/app/api/payments/create-order/route.ts`](src/app/api/payments/create-order/route.ts).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+- Seed product imagery is from Unsplash (placeholders); replace via the admin once live.
+- This folder is its own git repo (the home directory is an unrelated accidental repo —
+  always run git from inside this folder).
