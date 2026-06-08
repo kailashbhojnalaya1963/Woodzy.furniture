@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getProducts, getCategoryBySlug, getCategories } from "@/lib/catalog";
 import { ProductCard } from "@/components/catalog/ProductCard";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const cats = await getCategories();
   return cats.map((c) => ({ slug: c.slug }));

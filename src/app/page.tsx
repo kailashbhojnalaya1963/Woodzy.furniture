@@ -10,6 +10,9 @@ import { StoryStrip } from "@/components/home/StoryStrip";
 import { TrustStrip } from "@/components/home/TrustStrip";
 import { SITE } from "@/config/site";
 
+// Re-pull the catalog periodically so admin changes appear without a redeploy.
+export const revalidate = 60;
+
 export default async function Home() {
   const [featured, all, categories] = await Promise.all([
     getFeatured(),

@@ -84,7 +84,16 @@ export function ProductsPanel({ sb }: { sb: SupabaseClient }) {
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editing) return;
-    const slug = editing.slug || slugify(editing.name);
+    let slug = editing.slug || slugify(editing.name);
+    // a brand-new product must not overwrite an existing one via a colliding slug
+    if (!editing.id) {
+      const taken = new Set(products.map((p) => p.slug));
+      if (taken.has(slug)) {
+        let n = 2;
+        while (taken.has(`${slug}-${n}`)) n++;
+        slug = `${slug}-${n}`;
+      }
+    }
     await sb.from("products").upsert(
       {
         slug,

@@ -7,6 +7,8 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { ProductCard } from "@/components/catalog/ProductCard";
 import { priceLabel } from "@/lib/format";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const products = await getProducts();
   return products.map((p) => ({ slug: p.slug }));
