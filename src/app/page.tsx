@@ -1,16 +1,27 @@
 import Link from "next/link";
-import { getFeatured, getProducts } from "@/lib/catalog";
+import { getFeatured, getProducts, getCategories } from "@/lib/catalog";
 import { LandingIntro } from "@/components/intro/LandingIntro";
 import { ShowroomTurntable } from "@/components/hero/ShowroomTurntable";
+import { CategoryStrip } from "@/components/home/CategoryStrip";
+import { NewArrivals } from "@/components/home/NewArrivals";
+import { Pillars } from "@/components/home/Pillars";
+import { Materials } from "@/components/home/Materials";
+import { StoryStrip } from "@/components/home/StoryStrip";
+import { TrustStrip } from "@/components/home/TrustStrip";
 import { SITE } from "@/config/site";
 
 export default async function Home() {
-  const [featured, all] = await Promise.all([getFeatured(), getProducts()]);
+  const [featured, all, categories] = await Promise.all([
+    getFeatured(),
+    getProducts(),
+    getCategories(),
+  ]);
   // Different pieces all around the ring: featured first, then fill with the rest.
   const showcase = [
     ...featured,
     ...all.filter((p) => !featured.some((f) => f.id === p.id)),
   ].slice(0, 14);
+  const newArrivals = all.slice(0, 8);
   const regions = SITE.serviceRegions.join(", ");
 
   return (
@@ -54,6 +65,13 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <CategoryStrip categories={categories} />
+      <NewArrivals products={newArrivals} />
+      <Pillars />
+      <Materials />
+      <StoryStrip />
+      <TrustStrip />
     </>
   );
 }
