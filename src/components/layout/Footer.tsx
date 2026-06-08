@@ -87,9 +87,15 @@ export function Footer({ categories }: { categories: Category[] }) {
         </div>
 
         <div className="border-t border-cream/10">
-          <div className="mx-auto max-w-7xl px-6 py-5 text-xs text-sand/60 flex flex-col sm:flex-row gap-2 justify-between">
+          <div className="mx-auto max-w-7xl px-6 py-5 text-xs text-sand/60 flex flex-col sm:flex-row gap-3 items-center justify-between">
             <span>© {year} Woodzy. All rights reserved.</span>
             <span>{SITE.tagline}</span>
+            <Link
+              href="/admin"
+              className="rounded-full border border-sand/20 px-3 py-1 text-sand/50 hover:text-amber-brand hover:border-amber-brand transition-colors"
+            >
+              Admin login
+            </Link>
           </div>
         </div>
       </div>
