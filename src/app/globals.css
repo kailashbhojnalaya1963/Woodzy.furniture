@@ -34,6 +34,22 @@ body {
   color: var(--color-cream);
 }
 
+/* form input styling used across checkout */
+.wz-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-wood-dark) 22%, transparent);
+  background: var(--color-cream);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-wood-darkest);
+  outline: none;
+}
+.wz-input:focus {
+  border-color: var(--color-amber-brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-amber-brand) 22%, transparent);
+}
+
 /* subtle wood-grain texture utility for section backgrounds */
 .wood-grain {
   background-color: var(--color-wood-dark);

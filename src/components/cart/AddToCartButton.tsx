@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ShoppingBag, Check } from "lucide-react";
 import type { Product } from "@/types/catalog";
 import { useCart } from "@/store/cart";
+import { useUI } from "@/store/ui";
 import { cn } from "@/lib/utils";
 
 export function AddToCartButton({
@@ -16,6 +17,7 @@ export function AddToCartButton({
   size?: "sm" | "lg";
 }) {
   const add = useCart((s) => s.add);
+  const openCart = useUI((s) => s.openCart);
   const [added, setAdded] = useState(false);
 
   const onAdd = () => {
@@ -30,6 +32,7 @@ export function AddToCartButton({
       qty,
     );
     setAdded(true);
+    openCart();
     setTimeout(() => setAdded(false), 1400);
   };
 

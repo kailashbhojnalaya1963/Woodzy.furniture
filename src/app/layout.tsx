@@ -3,6 +3,7 @@ import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { getCategories } from "@/lib/catalog";
 import { SITE } from "@/config/site";
 
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <Navbar categories={categories} />
         <main className="flex-1">{children}</main>
         <Footer categories={categories} />
+        <CartDrawer />
       </body>
     </html>
   );
