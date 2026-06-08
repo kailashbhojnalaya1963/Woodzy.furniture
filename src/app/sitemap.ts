@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getProducts, getCategories } from "@/lib/catalog";
-
-const BASE = "https://woodzy.com";
+import { SITE_URL as BASE } from "@/config/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories] = await Promise.all([getProducts(), getCategories()]);

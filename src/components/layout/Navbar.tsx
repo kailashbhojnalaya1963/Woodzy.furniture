@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Menu, Search, ChevronDown } from "lucide-react";
 import type { Category } from "@/types/catalog";
+import { Logo } from "@/components/brand/Logo";
 import { CartButton } from "@/components/cart/CartButton";
 import { MegaMenu } from "./MegaMenu";
 import { MobileNav } from "./MobileNav";
@@ -39,14 +39,7 @@ export function Navbar({ categories }: { categories: Category[] }) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center gap-6 h-16">
         <Link href="/" aria-label="Woodzy home" className="shrink-0">
-          <Image
-            src="/brand/woodzy-logo.png"
-            alt="Woodzy — Warm Woods, Cozy Living."
-            width={968}
-            height={697}
-            priority
-            className="h-11 w-auto"
-          />
+          <Logo variant="full" size={38} />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1 ml-2 text-sm font-medium">

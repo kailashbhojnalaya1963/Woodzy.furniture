@@ -26,6 +26,18 @@ export const SITE = {
 
 export type ServiceRegion = (typeof SITE.serviceRegions)[number];
 
+/**
+ * Canonical site URL for metadata, OG images, sitemap and robots.
+ * Prefers an explicit NEXT_PUBLIC_SITE_URL (set this when a custom domain like
+ * woodzy.com goes live), then Vercel's production domain, then a sensible default.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://woodzy-furniture.vercel.app")
+).replace(/\/$/, "");
+
 /** True when the given state is within Woodzy's current delivery reach. */
 export function isServiceState(state: string): boolean {
   return (SITE.serviceRegions as readonly string[]).includes(state);
