@@ -11,7 +11,7 @@ import { priceLabel } from "@/lib/format";
 export function ShowroomTurntable({ items }: { items: Product[] }) {
   const router = useRouter();
   const stageRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const rotation = useRef(0);
   const radiusRef = useRef(320);
@@ -20,13 +20,27 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
   const lastX = useRef(0);
   const paused = useRef(false);
 
-  const [radius, setRadius] = useState(320);
   const [reduced, setReduced] = useState(false);
   const total = items.length;
 
+  // Position every card on a curved arc, always facing the viewer (no 3D flip,
+  // so a piece is never shown mirrored). Side pieces shrink + fade out.
   const applyTransform = () => {
-    if (ringRef.current) {
-      ringRef.current.style.transform = `translateZ(-${radiusRef.current}px) rotateY(${rotation.current}deg)`;
+    const R = radiusRef.current;
+    const rot = rotation.current;
+    for (let i = 0; i < total; i++) {
+      const el = cardRefs.current[i];
+      if (!el) continue;
+      const a = ((angleFor(i, total) + rot) * Math.PI) / 180;
+      const z = Math.cos(a); // depth: 1 = front, -1 = back
+      const x = Math.sin(a) * R; // horizontal offset
+      const scale = 0.58 + ((z + 1) / 2) * 0.56;
+      const ty = (1 - z) * 5;
+      const opacity = z < -0.1 ? 0 : Math.min(1, (z + 0.1) / 0.55);
+      el.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${ty}px, 0) scale(${scale})`;
+      el.style.opacity = String(opacity);
+      el.style.zIndex = String(1000 + Math.round(z * 1000));
+      el.style.pointerEvents = opacity < 0.2 ? "none" : "auto";
     }
   };
 
@@ -34,17 +48,13 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
   useEffect(() => {
     const update = () => {
       const w = stageRef.current?.clientWidth ?? 800;
-      // Wider ring so a full circle of pieces spreads without crowding;
-      // also scale with item count to keep neighbours from overlapping.
-      const byCount = (155 * Math.max(total, 1)) / (2 * Math.PI);
-      const r = Math.max(230, Math.min(560, Math.max(w * 0.42, byCount)));
-      radiusRef.current = r;
-      setRadius(r);
+      radiusRef.current = Math.max(150, Math.min(380, w * 0.34));
       applyTransform();
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
   // reduced motion preference
@@ -69,7 +79,8 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reduced]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reduced, total]);
 
   const onPointerDown = (e: ReactPointerEvent) => {
     dragging.current = true;
@@ -82,7 +93,7 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
     movedDist.current += Math.abs(dx);
-    rotation.current += dx * 0.32;
+    rotation.current += dx * 0.35;
     applyTransform();
   };
   const onPointerUp = () => {
@@ -94,7 +105,7 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
         {items.map((p) => (
-          <Link key={p.id} href={`/product/${p.slug}`} className="block group">
+          <Link key={p.id} href={`/product/${p.slug}`} className="block">
             <Card product={p} />
           </Link>
         ))}
@@ -106,8 +117,7 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
     <div className="relative select-none">
       <div
         ref={stageRef}
-        className="relative mx-auto h-[330px] sm:h-[400px] touch-none"
-        style={{ perspective: "1200px" }}
+        className="relative mx-auto h-[300px] sm:h-[380px] touch-none"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -115,43 +125,28 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
         onMouseEnter={() => (paused.current = true)}
         onMouseLeave={() => (paused.current = false)}
       >
-        <div
-          ref={ringRef}
-          className="absolute inset-0"
-          style={{
-            transformStyle: "preserve-3d",
-            transform: `translateZ(-${radius}px) rotateY(0deg)`,
-            WebkitBoxReflect:
-              "below 10px linear-gradient(transparent, transparent 55%, rgba(0,0,0,0.22))",
-          }}
-        >
-          {items.map((p, i) => {
-            const angle = angleFor(i, total);
-            return (
-              <button
-                key={p.id}
-                type="button"
-                className="absolute left-1/2 top-1/2 w-36 sm:w-44 cursor-pointer outline-none"
-                style={{
-                  transform: `translate(-50%, -50%) rotateY(${angle}deg) translateZ(${radius}px)`,
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                }}
-                onClick={() => {
-                  if (movedDist.current < 6) router.push(`/product/${p.slug}`);
-                }}
-                aria-label={`${p.name} — ${priceLabel(p)}`}
-              >
-                <Card product={p} />
-              </button>
-            );
-          })}
-        </div>
+        {items.map((p, i) => (
+          <button
+            key={p.id}
+            type="button"
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
+            className="absolute left-1/2 top-1/2 w-32 sm:w-40 cursor-pointer outline-none will-change-transform"
+            style={{ opacity: 0 }}
+            onClick={() => {
+              if (movedDist.current < 6) router.push(`/product/${p.slug}`);
+            }}
+            aria-label={`${p.name} — ${priceLabel(p)}`}
+          >
+            <Card product={p} />
+          </button>
+        ))}
       </div>
 
-      {/* glossy floor platform */}
+      {/* soft floor shadow (not a reflection) */}
       <div
-        className="mx-auto -mt-6 h-10 w-3/4 max-w-2xl rounded-[100%] blur-md"
+        className="mx-auto -mt-4 h-8 w-2/3 max-w-xl rounded-[100%] blur-md"
         style={{ background: "radial-gradient(ellipse at center, #00000055, transparent 70%)" }}
       />
       <p className="text-center text-sand/60 text-xs mt-2 tracking-wide">
@@ -169,7 +164,7 @@ function Card({ product }: { product: Product }) {
           src={product.images[0]}
           alt={product.name}
           fill
-          sizes="180px"
+          sizes="160px"
           className="object-cover"
           draggable={false}
         />
