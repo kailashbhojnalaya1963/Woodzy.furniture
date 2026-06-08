@@ -34,7 +34,10 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
   useEffect(() => {
     const update = () => {
       const w = stageRef.current?.clientWidth ?? 800;
-      const r = Math.max(190, Math.min(440, w * 0.36));
+      // Wider ring so a full circle of pieces spreads without crowding;
+      // also scale with item count to keep neighbours from overlapping.
+      const byCount = (155 * Math.max(total, 1)) / (2 * Math.PI);
+      const r = Math.max(230, Math.min(560, Math.max(w * 0.42, byCount)));
       radiusRef.current = r;
       setRadius(r);
       applyTransform();
@@ -42,7 +45,7 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, []);
+  }, [total]);
 
   // reduced motion preference
   useEffect(() => {
@@ -131,6 +134,8 @@ export function ShowroomTurntable({ items }: { items: Product[] }) {
                 className="absolute left-1/2 top-1/2 w-36 sm:w-44 cursor-pointer outline-none"
                 style={{
                   transform: `translate(-50%, -50%) rotateY(${angle}deg) translateZ(${radius}px)`,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
                 }}
                 onClick={() => {
                   if (movedDist.current < 6) router.push(`/product/${p.slug}`);

@@ -1,11 +1,16 @@
 import Link from "next/link";
-import { getFeatured } from "@/lib/catalog";
+import { getFeatured, getProducts } from "@/lib/catalog";
 import { LandingIntro } from "@/components/intro/LandingIntro";
 import { ShowroomTurntable } from "@/components/hero/ShowroomTurntable";
 import { SITE } from "@/config/site";
 
 export default async function Home() {
-  const featured = await getFeatured();
+  const [featured, all] = await Promise.all([getFeatured(), getProducts()]);
+  // Different pieces all around the ring: featured first, then fill with the rest.
+  const showcase = [
+    ...featured,
+    ...all.filter((p) => !featured.some((f) => f.id === p.id)),
+  ].slice(0, 14);
   const regions = SITE.serviceRegions.join(", ");
 
   return (
@@ -45,7 +50,7 @@ export default async function Home() {
           </div>
 
           <div className="mt-10">
-            <ShowroomTurntable items={featured} />
+            <ShowroomTurntable items={showcase} />
           </div>
         </div>
       </section>
