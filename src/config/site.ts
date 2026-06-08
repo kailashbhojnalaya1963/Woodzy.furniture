@@ -17,7 +17,9 @@ export const SITE = {
   showPrices: true,
   showroom: {
     city: "Deoghar, Jharkhand",
-    address: "TBD — owner to provide",
+    // Leave blank until the owner shares the exact address; the showroom page
+    // falls back to "directions on WhatsApp" when this is empty.
+    address: "",
     hours: "Mon–Sun, 10:00 AM – 8:00 PM",
   },
 } as const;
